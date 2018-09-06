@@ -207,9 +207,9 @@ void Adafruit_LSM9DS0::readAccel()
     yhi |= ylo;
     zhi <<= 8;
     zhi |= zlo;
-    accelData.x = xhi;
-    accelData.y = yhi;
-    accelData.z = zhi;
+    accelData.x = xhi * _accel_mg_lsb / 1000 * SENSORS_GRAVITY_STANDARD;
+    accelData.y = yhi * _accel_mg_lsb / 1000 * SENSORS_GRAVITY_STANDARD;
+    accelData.z = zhi * _accel_mg_lsb / 1000 * SENSORS_GRAVITY_STANDARD;
 }
 
 
@@ -233,9 +233,9 @@ void Adafruit_LSM9DS0::readMag()
     yhi |= ylo;
     zhi <<= 8;
     zhi |= zlo;
-    magData.x = xhi;
-    magData.y = yhi;
-    magData.z = zhi;
+    magData.x = xhi * _mag_mgauss_lsb / 1000;
+    magData.y = yhi * _mag_mgauss_lsb / 1000;
+    magData.z = zhi * _mag_mgauss_lsb / 1000;
 }
 
 
@@ -260,9 +260,9 @@ void Adafruit_LSM9DS0::readGyro()
     zhi <<= 8;
     zhi |= zlo;
 
-    gyroData.x = xhi;
-    gyroData.y = yhi;
-    gyroData.z = zhi;
+    gyroData.x = xhi * _gyro_dps_digit;
+    gyroData.y = yhi * _gyro_dps_digit:
+    gyroData.z = zhi * _gyro_dps_digit;
 }
 
 
@@ -511,15 +511,9 @@ void Adafruit_LSM9DS0::getAccelEvent(sensors_event_t* event, uint32_t timestamp)
     event->sensor_id = _lsm9dso_sensorid_accel;
     event->type = SENSOR_TYPE_ACCELEROMETER;
     event->timestamp = timestamp;
-    event->acceleration.x = accelData.x * _accel_mg_lsb;
-    event->acceleration.x /= 1000;
-    event->acceleration.x *= SENSORS_GRAVITY_STANDARD;
-    event->acceleration.y = accelData.y * _accel_mg_lsb;
-    event->acceleration.y /= 1000;
-    event->acceleration.y *= SENSORS_GRAVITY_STANDARD;
-    event->acceleration.z = accelData.z * _accel_mg_lsb;
-    event->acceleration.z /= 1000;
-    event->acceleration.z *= SENSORS_GRAVITY_STANDARD;
+    event->acceleration.x = accelData.x;
+    event->acceleration.y = accelData.y;
+    event->acceleration.z = accelData.z;
 }
 
 
@@ -530,12 +524,9 @@ void Adafruit_LSM9DS0::getMagEvent(sensors_event_t* event, uint32_t timestamp)
     event->sensor_id = _lsm9dso_sensorid_mag;
     event->type = SENSOR_TYPE_MAGNETIC_FIELD;
     event->timestamp = timestamp;
-    event->magnetic.x = magData.x * _mag_mgauss_lsb;
-    event->magnetic.x /= 1000;
-    event->magnetic.y = magData.y * _mag_mgauss_lsb;
-    event->magnetic.y /= 1000;
-    event->magnetic.z = magData.z * _mag_mgauss_lsb;
-    event->magnetic.z /= 1000;
+    event->magnetic.x = magData.x;
+    event->magnetic.y = magData.y;
+    event->magnetic.z = magData.z;
 }
 
 
@@ -546,9 +537,9 @@ void Adafruit_LSM9DS0::getGyroEvent(sensors_event_t* event, uint32_t timestamp)
     event->sensor_id = _lsm9dso_sensorid_accel;
     event->type = SENSOR_TYPE_GYROSCOPE;
     event->timestamp = timestamp;
-    event->gyro.x = gyroData.x * _gyro_dps_digit;
-    event->gyro.y = gyroData.y * _gyro_dps_digit;
-    event->gyro.z = gyroData.z * _gyro_dps_digit;
+    event->gyro.x = gyroData.x;
+    event->gyro.y = gyroData.y;
+    event->gyro.z = gyroData.z;
 }
 
 
