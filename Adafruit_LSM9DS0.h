@@ -241,6 +241,7 @@ public:
             (_parent->*_readFunc)();
             /* Fill in event data. */
             (_parent->*_eventFunc)(event, millis());
+            return true;
         }
 
         virtual void getSensor(sensor_t* sensor)
