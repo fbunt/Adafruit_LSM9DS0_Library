@@ -261,7 +261,7 @@ void Adafruit_LSM9DS0::readGyro()
     zhi |= zlo;
 
     gyroData.x = xhi * _gyro_dps_digit;
-    gyroData.y = yhi * _gyro_dps_digit:
+    gyroData.y = yhi * _gyro_dps_digit;
     gyroData.z = zhi * _gyro_dps_digit;
 }
 
