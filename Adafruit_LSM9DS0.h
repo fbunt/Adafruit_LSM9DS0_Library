@@ -219,20 +219,20 @@ public:
         Sensor()
         {}
 
-        Sensor(const Sensor& copy) :
-                _parent(copy._parent),
-                _readFunc(copy._readFunc),
-                _eventFunc(copy._eventFunc),
-                _sensorFunc(copy._sensorFunc)
+        Sensor(const Sensor& copy)
+            : _parent(copy._parent),
+              _readFunc(copy._readFunc),
+              _eventFunc(copy._eventFunc),
+              _sensorFunc(copy._sensorFunc)
         {}
 
         Sensor(Adafruit_LSM9DS0* parent, lsm9ds0_read_func readFunc,
                lsm9ds0_get_event_func eventFunc,
-               lsm9ds0_get_sensor_func sensorFunc) :
-                _parent(parent),
-                _readFunc(readFunc),
-                _eventFunc(eventFunc),
-                _sensorFunc(sensorFunc)
+               lsm9ds0_get_sensor_func sensorFunc)
+            : _parent(parent),
+              _readFunc(readFunc),
+              _eventFunc(eventFunc),
+              _sensorFunc(sensorFunc)
         {}
 
         virtual bool getEvent(sensors_event_t* event)
