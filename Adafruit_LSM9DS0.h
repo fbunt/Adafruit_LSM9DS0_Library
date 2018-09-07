@@ -167,9 +167,9 @@ public:
     {
         // +/- 245 degrees per second rotation
         LSM9DS0_GYROSCALE_245DPS = (0b00 << 4),
-        // +/- 245 degrees per second rotation
+        // +/- 500 degrees per second rotation
         LSM9DS0_GYROSCALE_500DPS = (0b01 << 4),
-        // +/- 245 degrees per second rotation
+        // +/- 2000 degrees per second rotation
         LSM9DS0_GYROSCALE_2000DPS = (0b10 << 4)
     } lsm9ds0GyroScale_t;
 
