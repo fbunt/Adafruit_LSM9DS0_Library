@@ -189,27 +189,20 @@ void Adafruit_LSM9DS0::readAccel()
 {
     // Read the accelerometer
     byte buffer[6];
-    readBuffer(XMTYPE,
-               0x80 | LSM9DS0_REGISTER_OUT_X_L_A,
-               6, buffer);
+    readBuffer(XMTYPE, (0x80 | LSM9DS0_REGISTER_OUT_X_L_A), 6, buffer);
 
-    uint8_t xlo = buffer[0];
-    int16_t xhi = buffer[1];
-    uint8_t ylo = buffer[2];
-    int16_t yhi = buffer[3];
-    uint8_t zlo = buffer[4];
-    int16_t zhi = buffer[5];
-
+    // Values in buffer are in little-endian format
     // Shift values to create properly formed integer (low byte first)
-    xhi <<= 8;
-    xhi |= xlo;
-    yhi <<= 8;
-    yhi |= ylo;
-    zhi <<= 8;
-    zhi |= zlo;
-    accelData.x = xhi * _accel_mg_lsb / 1000 * SENSORS_GRAVITY_STANDARD;
-    accelData.y = yhi * _accel_mg_lsb / 1000 * SENSORS_GRAVITY_STANDARD;
-    accelData.z = zhi * _accel_mg_lsb / 1000 * SENSORS_GRAVITY_STANDARD;
+    accelRawData.x = (buffer[1] << 8) | buffer[0];
+    accelRawData.y = (buffer[3] << 8) | buffer[2];
+    accelRawData.z = (buffer[5] << 8) | buffer[4];
+
+    accelData.x = accelRawData.x * _accel_mg_lsb / 1000
+                  * SENSORS_GRAVITY_STANDARD;
+    accelData.y = accelRawData.y * _accel_mg_lsb / 1000
+                  * SENSORS_GRAVITY_STANDARD;
+    accelData.z = accelRawData.z * _accel_mg_lsb / 1000
+                  * SENSORS_GRAVITY_STANDARD;
 }
 
 
@@ -219,23 +212,15 @@ void Adafruit_LSM9DS0::readMag()
     byte buffer[6];
     readBuffer(XMTYPE, (0x80 | LSM9DS0_REGISTER_OUT_X_L_M), 6, buffer);
 
-    uint8_t xlo = buffer[0];
-    int16_t xhi = buffer[1];
-    uint8_t ylo = buffer[2];
-    int16_t yhi = buffer[3];
-    uint8_t zlo = buffer[4];
-    int16_t zhi = buffer[5];
-
+    // Values in buffer are in little-endian format
     // Shift values to create properly formed integer (low byte first)
-    xhi <<= 8;
-    xhi |= xlo;
-    yhi <<= 8;
-    yhi |= ylo;
-    zhi <<= 8;
-    zhi |= zlo;
-    magData.x = xhi * _mag_mgauss_lsb / 1000;
-    magData.y = yhi * _mag_mgauss_lsb / 1000;
-    magData.z = zhi * _mag_mgauss_lsb / 1000;
+    magRawData.x = (buffer[1] << 8) | buffer[0];
+    magRawData.y = (buffer[3] << 8) | buffer[2];
+    magRawData.z = (buffer[5] << 8) | buffer[4];
+
+    magData.x = magRawData.x * _mag_mgauss_lsb / 1000;
+    magData.y = magRawData.y * _mag_mgauss_lsb / 1000;
+    magData.z = magRawData.z * _mag_mgauss_lsb / 1000;
 }
 
 
@@ -245,24 +230,15 @@ void Adafruit_LSM9DS0::readGyro()
     byte buffer[6];
     readBuffer(GYROTYPE, (0x80 | LSM9DS0_REGISTER_OUT_X_L_G), 6, buffer);
 
-    uint8_t xlo = buffer[0];
-    int16_t xhi = buffer[1];
-    uint8_t ylo = buffer[2];
-    int16_t yhi = buffer[3];
-    uint8_t zlo = buffer[4];
-    int16_t zhi = buffer[5];
-
+    // Values in buffer are in little-endian format
     // Shift values to create properly formed integer (low byte first)
-    xhi <<= 8;
-    xhi |= xlo;
-    yhi <<= 8;
-    yhi |= ylo;
-    zhi <<= 8;
-    zhi |= zlo;
+    gyroRawData.x = (buffer[1] << 8) | buffer[0];
+    gyroRawData.y = (buffer[3] << 8) | buffer[2];
+    gyroRawData.z = (buffer[5] << 8) | buffer[4];
 
-    gyroData.x = xhi * _gyro_dps_digit;
-    gyroData.y = yhi * _gyro_dps_digit;
-    gyroData.z = zhi * _gyro_dps_digit;
+    gyroData.x = gyroRawData.x * _gyro_dps_digit;
+    gyroData.y = gyroRawData.y * _gyro_dps_digit;
+    gyroData.z = gyroRawData.z * _gyro_dps_digit;
 }
 
 
@@ -271,14 +247,14 @@ void Adafruit_LSM9DS0::readTemp()
     // Read temp sensor
     byte buffer[2];
     readBuffer(XMTYPE, (0x80 | LSM9DS0_REGISTER_TEMP_OUT_L_XM), 2, buffer);
-    uint8_t xlo = buffer[0];
-    int16_t xhi = buffer[1];
 
-    xhi <<= 8;
-    xhi |= xlo;
-
+    // Values in buffer are in little-endian format
     // Shift values to create properly formed integer (low byte first)
-    temperature = xhi;
+    rawTemperature = (buffer[1] << 8) | buffer[0];
+
+    // This is just a guess since the staring point (21C here) isn't 
+    // documented :(
+    temperature = 21.0 + (float) rawTemperature / 8
 }
 
 
@@ -551,7 +527,7 @@ void Adafruit_LSM9DS0::getTempEvent(sensors_event_t* event, uint32_t timestamp)
     event->type = SENSOR_TYPE_AMBIENT_TEMPERATURE;
     event->timestamp = timestamp;
     // This is just a guess since the staring point (21C here) isn't documented :(
-    event->temperature = 21.0 + (float) temperature / 8;
+    event->temperature = temperature;
     //event->temperature /= LSM9DS0_TEMP_LSB_DEGREE_CELSIUS;
 }
 

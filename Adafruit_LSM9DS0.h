@@ -173,6 +173,13 @@ public:
         LSM9DS0_GYROSCALE_2000DPS = (0b10 << 4)
     } lsm9ds0GyroScale_t;
 
+    typedef struct raw_vector_s
+    {
+        int16_t x;
+        int16_t y;
+        int16_t z;
+    } lsm9ds0RawVector_t;
+
     typedef struct vector_s
     {
         float x;
@@ -180,14 +187,23 @@ public:
         float z;
     } lsm9ds0Vector_t;
 
-    // Last read accelerometer data will be available here
+    // Last read raw accelerometer values will be available here
+    lsm9ds0RawVector_t accelRawData;
+    // Last read raw magnetometer values will be available here
+    lsm9ds0RawVector_t magRawData;
+    // Last read raw gyroscope values will be available here
+    lsm9ds0RawVector_t gyroRawData;
+    // Last read raw temperature value will be available here
+    int16_t rawTemperature;
+
+    // Last read accelerometer data (converted) will be available here
     lsm9ds0Vector_t accelData;
-    // Last read magnetometer data will be available here
+    // Last read magnetometer data (converted) will be available here
     lsm9ds0Vector_t magData;
-    // Last read gyroscope data will be available here
+    // Last read gyroscope data (converted) will be available here
     lsm9ds0Vector_t gyroData;
-    // Last read temperzture data will be available here
-    int16_t temperature;
+    // Last read temperzture data (converted) will be available here
+    float temperature;
 
     bool begin(void);
     void read(void);
