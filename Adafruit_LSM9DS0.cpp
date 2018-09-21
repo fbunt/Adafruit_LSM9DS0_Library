@@ -254,7 +254,7 @@ void Adafruit_LSM9DS0::readTemp()
 
     // This is just a guess since the staring point (21C here) isn't 
     // documented :(
-    temperature = 21.0 + (float) rawTemperature / 8
+    temperature = 21.0 + (float) rawTemperature / 8;
 }
 
 
